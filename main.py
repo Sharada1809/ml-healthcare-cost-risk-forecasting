@@ -9,6 +9,10 @@ from xgboost import XGBClassifier,XGBRegressor
 from catboost import CatBoostClassifier, CatBoostRegressor
 from lightgbm import LGBMRegressor
 import joblib
+import warnings
+import json
+warnings.filterwarnings("ignore", category=UserWarning, message="X does not have valid feature names")
+
 
 def pre_processing(class_model = None , reg_model = None):
 
@@ -21,7 +25,6 @@ def pre_processing(class_model = None , reg_model = None):
     input_cat = ["gender"]
     input_ord = ["left_ear_hearing","right_ear_hearing","urine_protein","smoking_status"]
     input_num = df.drop(columns=input_cat + input_ord + target_cat + target_num).columns.tolist()
-
     ordinal_order = [
         [1, 2],                      # left_ear_hearing
         [1, 2],                      # right_ear_hearing
@@ -41,7 +44,6 @@ def pre_processing(class_model = None , reg_model = None):
 
     X = df[input_cat + input_ord + input_num] 
     y = df[target_cat + target_num]  
-
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # Classification Pipeline
@@ -50,8 +52,8 @@ def pre_processing(class_model = None , reg_model = None):
         ('preprocessing', input_transformer),
         ('model', class_model)   
     ])
-
         model.fit(X_train, y_train[target_cat])
+        y_pred = model.predict(X_test)
 
         # Saving Trained Classification model files with model name
         file_name = str(class_model).split('(')[0] # Ex:- ['RandomForestClassifier',')']
@@ -59,7 +61,6 @@ def pre_processing(class_model = None , reg_model = None):
         joblib.dump(model,file_path)
 
         # Classification Evaluate matrics
-        y_pred = model.predict(X_test)
         accuracy = accuracy_score(y_test[target_cat],y_pred)
         #print(f"model= {class_model}")
         print(f"{file_name} accuracy : {accuracy}")
@@ -72,12 +73,11 @@ def pre_processing(class_model = None , reg_model = None):
         ('preprocessing', input_transformer),
         ('model', reg_model)   
     ])
-
         model.fit(X_train, y_train["estimated_medical_cost"])
         y_pred = model.predict(X_test)
 
         # Saving Trained Regereesion model files with model name
-        file_name = str(reg_model).split('(')[0]
+        file_name = reg_model.__class__.__name__   #str(reg_model).split('(')[0]
         file_path = f"Trained models/{file_name}.pkl"
         joblib.dump(model,file_path)
 
@@ -91,7 +91,7 @@ def pre_processing(class_model = None , reg_model = None):
         print(f"{file_name} MAE : {mae:.2f}")
         print(f"{file_name} R² Score : {r2:.2f}")
 
-        return {"Model name": file_name, "R2_Score" : r2, "Saved Model File":file_path}
+        return {"Model name": file_name, "Accuracy" : r2, "Saved Model File":file_path}
 
 # classification models:
 random_cls = pre_processing(class_model = RandomForestClassifier())
