@@ -104,4 +104,3 @@ xgboost_cls = pre_processing(class_model = XGBClassifier())
 # lgbm_reg = pre_processing(reg_model = LGBMRegressor(force_col_wise=True))
 # catboost_reg = pre_processing(reg_model = CatBoostRegressor())
 
-# This is new update to the github
