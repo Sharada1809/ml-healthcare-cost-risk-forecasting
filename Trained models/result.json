@@ -1,0 +1,32 @@
+[
+    {
+        "Model name": "RandomForestClassifier",
+        "Accuracy": 0.7253977607542722,
+        "Saved Model File": "Trained models/RandomForestClassifier.pkl"
+    },
+    {
+        "Model name": "XGBClassifier",
+        "Accuracy": 0.718326458456099,
+        "Saved Model File": "Trained models/XGBClassifier.pkl"
+    },
+    {
+        "Model name": "RandomForestRegressor",
+        "Accuracy": 0.8181135574224458,
+        "Saved Model File": "Trained models/RandomForestRegressor.pkl"
+    },
+    {
+        "Model name": "XGBRegressor",
+        "Accuracy": 0.815648776810018,
+        "Saved Model File": "Trained models/XGBRegressor.pkl"
+    },
+    {
+        "Model name": "LGBMRegressor",
+        "Accuracy": 0.8303441894128074,
+        "Saved Model File": "Trained models/LGBMRegressor.pkl"
+    },
+    {
+        "Model name": "CatBoostRegressor",
+        "Accuracy": 0.8386853863360415,
+        "Saved Model File": "Trained models/CatBoostRegressor.pkl"
+    }
+]
