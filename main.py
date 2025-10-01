@@ -239,7 +239,7 @@ def final_prediction():
         return render_template('form.html', class_output=class_output,reg_output=reg_output)
     return render_template("form.html")
     
-
+##
 
 
 if __name__ == '__main__':
