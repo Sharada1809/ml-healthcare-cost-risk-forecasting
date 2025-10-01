@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Health Risk Prediction - Home</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
@@ -19,6 +19,17 @@
       <a href="signup.html"><i class="fa-solid fa-user-plus"></i> Signup</a>
     </div>
   </nav>
+
+   <!-- Flash Messages (optional) -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 
   <!-- Project Objective -->
   <div class="section">
@@ -56,9 +67,11 @@
     </div>
   </div>
 
-  <!-- Risk Prediction Button -->
+   <!-- Risk Prediction Button -->
   <div class="section center">
-    <a href="form.html" class="btn"><i class="fa-solid fa-stethoscope"></i> Start Risk Prediction</a>
+    <a href="{{ url_for('final_prediction') }}" class="btn">
+    <i class="fa-solid fa-stethoscope"></i> Start Risk Prediction
+</a>
   </div>
 
 </body>

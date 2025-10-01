@@ -1,0 +1,22 @@
+[
+    {
+        "Model name": "RandomForestRegressor",
+        "Accuracy": 0.9425635666898553,
+        "Saved Model File": "Trained models/RandomForestRegressor.pkl"
+    },
+    {
+        "Model name": "XGBRegressor",
+        "Accuracy": 0.9554964317299999,
+        "Saved Model File": "Trained models/XGBRegressor.pkl"
+    },
+    {
+        "Model name": "LGBMRegressor",
+        "Accuracy": 0.9596405791645665,
+        "Saved Model File": "Trained models/LGBMRegressor.pkl"
+    },
+    {
+        "Model name": "CatBoostRegressor",
+        "Accuracy": 0.9662555076908581,
+        "Saved Model File": "Trained models/CatBoostRegressor.pkl"
+    }
+]

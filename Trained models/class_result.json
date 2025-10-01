@@ -1,0 +1,12 @@
+[
+    {
+        "Model name": "RandomForestClassifier",
+        "Accuracy": 1.0,
+        "Saved Model File": "Trained models/RandomForestClassifier.pkl"
+    },
+    {
+        "Model name": "XGBClassifier",
+        "Accuracy": 1.0,
+        "Saved Model File": "Trained models/XGBClassifier.pkl"
+    }
+]

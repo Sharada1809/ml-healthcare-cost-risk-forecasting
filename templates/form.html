@@ -4,12 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Health Risk Prediction - Form</title>
-    <!-- Font Awesome for medical icons -->
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
     <!-- Navbar -->
@@ -27,210 +26,441 @@
     <!-- Form Container -->
     <div class="container">
       <h2><i class="fa-solid fa-heart-pulse"></i> Enter Your Health Details</h2>
-      <form action="/predict" method="post">
+
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+
+      <form action="/form" method="post" novalidate>
         <div class="form-grid">
           <!-- LEFT COLUMN -->
           <div>
             <div class="form-group">
-              <label><i class="fa-solid fa-venus-mars"></i> Gender</label
-              ><select name="gender">
-                <option value="">Select</option>
-                <option>Male</option>
-                <option>Female</option>
+              <label for="gender"
+                ><i class="fa-solid fa-venus-mars"></i> Gender</label
+              >
+              <select id="gender" name="gender" required>
+                <option value="" disabled selected>Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
               </select>
             </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-user"></i> Age</label
-              ><input type="number" name="age" />
-            </div>
-            <div class="form-group">
-              <label
-                ><i class="fa-solid fa-ruler-vertical"></i> Height (cm)</label
-              ><input type="number" name="height" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-weight-scale"></i> Weight (kg)</label
-              ><input type="number" name="weight" />
-            </div>
-            <div class="form-group">
-              <label
-                ><i class="fa-solid fa-ruler"></i> Waist Circumference</label
-              ><input type="number" name="waist_circumference" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-eye"></i> Left Eye Vision</label
-              ><input type="number" step="0.1" name="left_eye_vision" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-eye"></i> Right Eye Vision</label
-              ><input type="number" step="0.1" name="right_eye_vision" />
-            </div>
-            <div class="form-group">
-              <label
-                ><i class="fa-solid fa-ear-listen"></i> Left Ear Hearing</label
-              ><input type="number" step="0.1" name="left_ear_hearing" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-droplet"></i> Hemoglobin</label
-              ><input type="number" step="0.1" name="hemoglobin" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-vials"></i> Urine Protein</label
-              ><input type="number" step="0.1" name="urine_protein" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-vial"></i> Serum Creatinine</label
-              ><input type="number" step="0.1" name="serum_creatinine" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-flask"></i> AST (SGOT)</label
-              ><input type="number" step="0.1" name="ast_sgot" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-flask"></i> ALT (SGPT)</label
-              ><input type="number" step="0.1" name="alt_sgpt" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-flask"></i> Gamma GTP</label
-              ><input type="number" step="0.1" name="gamma_gtp" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-weight-hanging"></i> BMI</label
-              ><input type="number" step="0.1" name="bmi" />
-            </div>
-            <div class="form-group">
-              <label
-                ><i class="fa-solid fa-ruler-combined"></i> Waist-to-Height
-                Ratio</label
-              ><input type="number" step="0.01" name="waist_to_height_ratio" />
-            </div>
-          </div>
 
-          <!-- RIGHT COLUMN (continued) -->
-          <div>
             <div class="form-group">
-              <label
-                ><i class="fa-solid fa-ear-listen"></i> Right Ear Hearing</label
-              ><input type="number" step="0.1" name="right_ear_hearing" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-heart"></i> Systolic BP</label
-              ><input type="number" name="systolic_bp" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-heart"></i> Diastolic BP</label
-              ><input type="number" name="diastolic_bp" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-droplet"></i> Blood Sugar</label
-              ><input type="number" name="blood_sugar" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-vial"></i> Total Cholesterol</label
-              ><input type="number" name="total_cholesterol" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-vial"></i> HDL Cholesterol</label
-              ><input type="number" name="hdl_cholesterol" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-vial"></i> LDL Cholesterol</label
-              ><input type="number" name="ldl_cholesterol" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-vial"></i> Triglycerides</label
-              ><input type="number" name="triglycerides" />
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-smoking"></i> Smoking Status</label>
-              <select name="smoking_status">
-                <option value="">Select</option>
-                <option>Non-smoker</option>
-                <option>Smoker</option>
-                <option>Former Smoker</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label
+              <label for="alcohol_consumption"
                 ><i class="fa-solid fa-wine-bottle"></i> Alcohol
                 Consumption</label
               >
-              <select name="alcohol_consumption">
-                <option value="">Select</option>
-                <option>Yes</option>
-                <option>No</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label><i class="fa-solid fa-dna"></i> Diabetes Risk</label>
-              <select name="diabetes_risk">
-                <option value="">Select</option>
-                <option>Yes</option>
-                <option>No</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label
-                ><i class="fa-solid fa-heart-circle-plus"></i> Hypertension
-                Risk</label
+              <select
+                id="alcohol_consumption"
+                name="alcohol_consumption"
+                required
               >
-              <select name="hypertension_risk">
-                <option value="">Select</option>
-                <option>Yes</option>
-                <option>No</option>
+                <option value="" disabled selected>Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
               </select>
             </div>
+
             <div class="form-group">
-              <label><i class="fa-solid fa-vials"></i> Cholesterol Risk</label>
-              <select name="cholesterol_risk">
-                <option value="">Select</option>
-                <option>Yes</option>
-                <option>No</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label
-                ><i class="fa-solid fa-liver"></i> Liver Disease Risk</label
+              <label for="left_ear_hearing"
+                ><i class="fa-solid fa-ear-listen"></i> Left Ear Hearing
+                (1-2)</label
               >
-              <select name="liver_disease_risk">
-                <option value="">Select</option>
-                <option>Yes</option>
-                <option>No</option>
-              </select>
+              <input
+                id="left_ear_hearing"
+                type="number"
+                step="1"
+                min="1"
+                max="2"
+                name="left_ear_hearing"
+                required
+              />
             </div>
+
             <div class="form-group">
-              <label
-                ><i class="fa-solid fa-kidneys"></i> Kidney Disease Risk</label
+              <label for="right_ear_hearing"
+                ><i class="fa-solid fa-ear-listen"></i> Right Ear Hearing
+                (1-2)</label
               >
-              <select name="kidney_disease_risk">
-                <option value="">Select</option>
-                <option>Yes</option>
-                <option>No</option>
+              <input
+                id="right_ear_hearing"
+                type="number"
+                step="1"
+                min="1"
+                max="2"
+                name="right_ear_hearing"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="urine_protein"
+                ><i class="fa-solid fa-vials"></i> Urine Protein (1-6)</label
+              >
+              <input
+                id="urine_protein"
+                type="number"
+                step="1"
+                min="1"
+                max="6"
+                name="urine_protein"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="smoking_status"
+                ><i class="fa-solid fa-smoking"></i> Smoking Status</label
+              >
+              <select id="smoking_status" name="smoking_status" required>
+                <option value="" disabled selected>Select</option>
+                <option value="1">Non-smoker</option>
+                <option value="2">Smoker</option>
+                <option value="3">Former Smoker</option>
               </select>
             </div>
+
             <div class="form-group">
-              <label
-                ><i class="fa-solid fa-dollar-sign"></i> Estimated Medical
-                Cost</label
-              ><input type="number" step="0.01" name="estimated_medical_cost" />
+              <label for="age"><i class="fa-solid fa-user"></i> Age</label>
+              <input id="age" type="number" min="0" name="age" required />
+            </div>
+
+            <div class="form-group">
+              <label for="height"
+                ><i class="fa-solid fa-ruler-vertical"></i> Height (cm)</label
+              >
+              <input
+                id="height"
+                type="number"
+                step="0.1"
+                min="0"
+                name="height"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="weight"
+                ><i class="fa-solid fa-weight-scale"></i> Weight (kg)</label
+              >
+              <input
+                id="weight"
+                type="number"
+                step="0.1"
+                min="0"
+                name="weight"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="waist_circumference"
+                ><i class="fa-solid fa-ruler"></i> Waist Circumference
+                (cm)</label
+              >
+              <input
+                id="waist_circumference"
+                type="number"
+                step="0.1"
+                min="0"
+                name="waist_circumference"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="left_eye_vision"
+                ><i class="fa-solid fa-eye"></i> Left Eye Vision</label
+              >
+              <input
+                id="left_eye_vision"
+                type="number"
+                step="0.1"
+                min="0"
+                name="left_eye_vision"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="right_eye_vision"
+                ><i class="fa-solid fa-eye"></i> Right Eye Vision</label
+              >
+              <input
+                id="right_eye_vision"
+                type="number"
+                step="0.1"
+                min="0"
+                name="right_eye_vision"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="hemoglobin"
+                ><i class="fa-solid fa-droplet"></i> Hemoglobin</label
+              >
+              <input
+                id="hemoglobin"
+                type="number"
+                step="0.1"
+                min="0"
+                name="hemoglobin"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN -->
+          <div>
+            <div class="form-group">
+              <label for="serum_creatinine"
+                ><i class="fa-solid fa-vial"></i> Serum Creatinine</label
+              >
+              <input
+                id="serum_creatinine"
+                type="number"
+                step="0.1"
+                min="0"
+                name="serum_creatinine"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="ast_sgot"
+                ><i class="fa-solid fa-flask"></i> AST (SGOT)</label
+              >
+              <input
+                id="ast_sgot"
+                type="number"
+                step="0.1"
+                min="0"
+                name="ast_sgot"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="alt_sgpt"
+                ><i class="fa-solid fa-flask"></i> ALT (SGPT)</label
+              >
+              <input
+                id="alt_sgpt"
+                type="number"
+                step="0.1"
+                min="0"
+                name="alt_sgpt"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="gamma_gtp"
+                ><i class="fa-solid fa-flask"></i> Gamma GTP</label
+              >
+              <input
+                id="gamma_gtp"
+                type="number"
+                step="0.1"
+                min="0"
+                name="gamma_gtp"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="bmi"
+                ><i class="fa-solid fa-weight-hanging"></i> BMI</label
+              >
+              <input
+                id="bmi"
+                type="number"
+                step="0.1"
+                min="0"
+                name="bmi"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="waist_to_height_ratio"
+                ><i class="fa-solid fa-ruler-combined"></i> Waist-to-Height
+                Ratio</label
+              >
+              <input
+                id="waist_to_height_ratio"
+                type="number"
+                step="0.01"
+                min="0"
+                name="waist_to_height_ratio"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="systolic_bp"
+                ><i class="fa-solid fa-heart"></i> Systolic BP</label
+              >
+              <input
+                id="systolic_bp"
+                type="number"
+                min="0"
+                name="systolic_bp"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="diastolic_bp"
+                ><i class="fa-solid fa-heart"></i> Diastolic BP</label
+              >
+              <input
+                id="diastolic_bp"
+                type="number"
+                min="0"
+                name="diastolic_bp"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="blood_sugar"
+                ><i class="fa-solid fa-droplet"></i> Blood Sugar</label
+              >
+              <input
+                id="blood_sugar"
+                type="number"
+                min="0"
+                name="blood_sugar"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="total_cholesterol"
+                ><i class="fa-solid fa-vial"></i> Total Cholesterol</label
+              >
+              <input
+                id="total_cholesterol"
+                type="number"
+                min="0"
+                name="total_cholesterol"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="hdl_cholesterol"
+                ><i class="fa-solid fa-vial"></i> HDL Cholesterol</label
+              >
+              <input
+                id="hdl_cholesterol"
+                type="number"
+                min="0"
+                name="hdl_cholesterol"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="ldl_cholesterol"
+                ><i class="fa-solid fa-vial"></i> LDL Cholesterol</label
+              >
+              <input
+                id="ldl_cholesterol"
+                type="number"
+                min="0"
+                name="ldl_cholesterol"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="triglycerides"
+                ><i class="fa-solid fa-vial"></i> Triglycerides</label
+              >
+              <input
+                id="triglycerides"
+                type="number"
+                min="0"
+                name="triglycerides"
+                required
+              />
             </div>
           </div>
         </div>
-        <button type="submit">
+
+        <button type="submit" class="submit-btn">
           <i class="fa-solid fa-stethoscope"></i> Predict Health Risks & Cost
         </button>
-        <!-- Results Section -->
+
+        {% if class_output and reg_output %}
         <div id="results">
-          {% if health_risk and medical_cost %}
           <div class="result-box">
             <h3>
               <i class="fa-solid fa-heart-circle-check"></i> Prediction Results
             </h3>
-            <p><strong>Health Risk:</strong> {{ health_risk }}</p>
-            <p><strong>Estimated Medical Cost:</strong> ${{ medical_cost }}</p>
+
+            <h4>🩺 Health Risk Predictions:</h4>
+            <ul>
+              <li>
+                Diabetes Risk:
+                <span
+                  class="status {{ 'status-yes' if class_output['diabetes_risk'] == 1 else 'status-no' }}"
+                >
+                  {{ 'Yes' if class_output['diabetes_risk'] == 1 else 'No' }}
+                </span>
+              </li>
+              <li>
+                Hypertension Risk:
+                <span
+                  class="status {{ 'status-yes' if class_output['hypertension_risk'] == 1 else 'status-no' }}"
+                >
+                  {{ 'Yes' if class_output['hypertension_risk'] == 1 else 'No'
+                  }}
+                </span>
+              </li>
+              <li>
+                Cholesterol Risk:
+                <span
+                  class="status {{ 'status-yes' if class_output['cholesterol_risk'] == 1 else 'status-no' }}"
+                >
+                  {{ 'Yes' if class_output['cholesterol_risk'] == 1 else 'No' }}
+                </span>
+              </li>
+              <li>
+                Liver Disease Risk:
+                <span
+                  class="status {{ 'status-yes' if class_output['liver_disease_risk'] == 1 else 'status-no' }}"
+                >
+                  {{ 'Yes' if class_output['liver_disease_risk'] == 1 else 'No'
+                  }}
+                </span>
+              </li>
+              <li>
+                Kidney Disease Risk:
+                <span
+                  class="status {{ 'status-yes' if class_output['kidney_disease_risk'] == 1 else 'status-no' }}"
+                >
+                  {{ 'Yes' if class_output['kidney_disease_risk'] == 1 else 'No'
+                  }}
+                </span>
+              </li>
+            </ul>
+
+            <h4>💰 Estimated Medical Cost:</h4>
+            <p>${{ "%.2f" | format(reg_output) }}</p>
           </div>
-          {% endif %}
         </div>
+        {% endif %}
       </form>
     </div>
   </body>
