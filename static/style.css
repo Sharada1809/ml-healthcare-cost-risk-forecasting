@@ -249,11 +249,11 @@ body {
 }
 
 .status-yes {
-  background-color: #3cb371; /* MediumSeaGreen */
+  background-color: #dc143c; /* MediumSeaGreen */
 }
 
 .status-no {
-  background-color: #dc143c; /* Crimson */
+  background-color: #3cb371; /* Crimson */
 }
 
 .result-box p {
