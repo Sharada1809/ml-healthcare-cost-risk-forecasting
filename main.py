@@ -14,16 +14,78 @@ import joblib
 import warnings
 import json
 from flask import Flask, flash, redirect, render_template, request, session, url_for
+import pymysql
 warnings.filterwarnings("ignore", category=UserWarning, message="X does not have valid feature names")
 
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey123'
 
+# MySQL Database Configuration
+db_config = {
+    "host": "localhost",
+    "user": "root",
+    "password": "", #Mysql
+    "database": "healthcare"
+}
+
+# Establish database connection
+def get_db_connection():
+    return pymysql.connect(
+        host=db_config['host'],
+        user=db_config['user'],
+        password=db_config['password'],
+        database=db_config['database'],
+        cursorclass=pymysql.cursors.DictCursor
+    )
+
 # Home page
 @app.route("/")
 def home():
     return render_template("home.html")
+
+#User registration
+@app.route("/remote_user/register", methods=["GET", "POST"])
+def remote_user_register():
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        # Basic validation
+        if not (name and email and password):
+            flash("All fields are required.", "danger")
+            return redirect(url_for("remote_user_register"))
+        
+        conn = get_db_connection()
+        try:
+            with conn.cursor() as cursor:
+                # Check for existing user by name, email, or mobile
+                query = """
+                SELECT * FROM users WHERE name = %s OR email = %s
+                """
+                cursor.execute(query, (name, email))
+                existing_user = cursor.fetchone()
+                
+                if existing_user:
+                    flash("User already exists. Please use a different name, email, or mobile number.", "danger")
+                    return redirect(url_for("remote_user_register"))
+                
+                # Insert new user
+                query = """
+                INSERT INTO users (name, email, mobile, password, confirm_passwor)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'remote_user')
+                """
+                cursor.execute(query, (name, email, gender, country, state, city, address, mobile, password))
+                conn.commit()
+                flash("Registration successful! You can now login.", "success")
+        except pymysql.MySQLError as e:
+            flash(f"Error: {str(e)}", "danger")
+        finally:
+            conn.close()
+
+    return render_template("remote_user_register.html")
 
 # login page
 @app.route('/login', methods=['GET', 'POST'])
@@ -128,9 +190,9 @@ def pre_processing(class_model = None , reg_model = None):
         print(f"{file_name} R² Score : {r2:.2f}")
 
         return {"Model name": file_name, "Accuracy" : r2, "Saved Model File":file_path}
-
-def best_model():
     
+
+def train_and_save():
     # classification models:
     random_cls = pre_processing(class_model = RandomForestClassifier())
     print("--------------------------------------------------------------------------------")
@@ -153,8 +215,18 @@ def best_model():
     class_path = "Trained models/class_result.json"
     with open(class_path, "w") as file:
         json.dump(class_models,file,indent=4)
-    
-    with open(class_path, "r") as f1:
+
+     # Creating Json file for Regression models
+    reg_path = "Trained models/reg_result.json"
+    with open(reg_path, "w") as file:
+        json.dump(reg_models,file,indent=4)
+
+#train_and_save()  
+
+def best_model():
+
+    # Loading the best classification model for predtion
+    with open("Trained models/class_result.json", "r") as f1:
         cls_model_results = json.load(f1)
 
     cls_best_model = max(cls_model_results, key=lambda x : x["Accuracy"])
@@ -163,12 +235,8 @@ def best_model():
     print(f"The best model is : {cls_mdel_type}")
     best_model_for_classification  = joblib.load(cls_model_file) 
 
-    # Creating Json file for Regression models
-    reg_path = "Trained models/reg_result.json"
-    with open(reg_path, "w") as file:
-        json.dump(reg_models,file,indent=4)
-   
-    with open(reg_path, "r") as f2:
+   # Loading the best regression model for predtion
+    with open("Trained models/reg_result.json", "r") as f2:
         reg_model_results = json.load(f2)
     
     reg_best_model = max(reg_model_results, key=lambda x : x["Accuracy"])
@@ -179,6 +247,11 @@ def best_model():
 
     return {"Classification": best_model_for_classification, "Regression" : best_model_for_regression}
 
+
+
+model = best_model()
+class_model = model["Classification"]
+reg_model = model["Regression"]
 
 @app.route('/form', methods=['GET', 'POST'])
 def final_prediction():
@@ -192,38 +265,35 @@ def final_prediction():
     if request.method == "POST":
         
         input = {
-            "gender": request.form.get("gender"),
-            "age": request.form.get("age"),
-            "height": request.form.get("height"),
-            "weight": request.form.get("weight"),
-            "waist_circumference": request.form.get("waist_circumference"),
-            "alcohol_consumption": request.form.get("alcohol_consumption"),
-            "smoking_status": request.form.get("smoking_status"),
-            "left_ear_hearing": request.form.get("left_ear_hearing"),
-            "right_ear_hearing": request.form.get("right_ear_hearing"),
-            "left_eye_vision": request.form.get("left_eye_vision"),
-            "right_eye_vision": request.form.get("right_eye_vision"),
-            "urine_protein": request.form.get("urine_protein"),
-            "hemoglobin": request.form.get("hemoglobin"),
-            "serum_creatinine": request.form.get("serum_creatinine"),
-            "ast_sgot": request.form.get("ast_sgot"),
-            "alt_sgpt": request.form.get("alt_sgpt"),
-            "gamma_gtp": request.form.get("gamma_gtp"),
-            "blood_sugar": request.form.get("blood_sugar"),
-            "total_cholesterol": request.form.get("total_cholesterol"),
-            "hdl_cholesterol": request.form.get("hdl_cholesterol"),
-            "ldl_cholesterol": request.form.get("ldl_cholesterol"),
-            "triglycerides": request.form.get("triglycerides"),
-            "bmi": request.form.get("bmi"),
-            "waist_to_height_ratio": request.form.get("waist_to_height_ratio"),
-            "systolic_bp": request.form.get("systolic_bp"),
-            "diastolic_bp": request.form.get("diastolic_bp")
-            }
+        "gender": request.form.get("gender"),
+        "age": float(request.form.get("age")),
+        "height": float(request.form.get("height")),
+        "weight": float(request.form.get("weight")),
+        "waist_circumference": float(request.form.get("waist_circumference")),
+        "alcohol_consumption": request.form.get("alcohol_consumption"),
+        "smoking_status": int(request.form.get("smoking_status")),
+        "left_ear_hearing": int(request.form.get("left_ear_hearing")),
+        "right_ear_hearing": int(request.form.get("right_ear_hearing")),
+        "left_eye_vision": float(request.form.get("left_eye_vision")),
+        "right_eye_vision": float(request.form.get("right_eye_vision")),
+        "urine_protein": int(request.form.get("urine_protein")),
+        "hemoglobin": float(request.form.get("hemoglobin")),
+        "serum_creatinine": float(request.form.get("serum_creatinine")),
+        "ast_sgot": float(request.form.get("ast_sgot")),
+        "alt_sgpt": float(request.form.get("alt_sgpt")),
+        "gamma_gtp": float(request.form.get("gamma_gtp")),
+        "blood_sugar": float(request.form.get("blood_sugar")),
+        "total_cholesterol": float(request.form.get("total_cholesterol")),
+        "hdl_cholesterol": float(request.form.get("hdl_cholesterol")),
+        "ldl_cholesterol": float(request.form.get("ldl_cholesterol")),
+        "triglycerides": float(request.form.get("triglycerides")),
+        "bmi": float(request.form.get("bmi")),
+        "waist_to_height_ratio": float(request.form.get("waist_to_height_ratio")),
+        "systolic_bp": float(request.form.get("systolic_bp")),
+        "diastolic_bp": float(request.form.get("diastolic_bp"))
+        }
 
         df = pd.DataFrame([input])
-        model = best_model()
-        class_model = model["Classification"]
-        reg_model = model["Regression"]
 
         # Prediction for classification model
         class_pred = class_model.predict(df) #[[0,0,1,0,1]]
@@ -244,13 +314,10 @@ def final_prediction():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    
 
 
 
 
         
     
-
-
-
-
