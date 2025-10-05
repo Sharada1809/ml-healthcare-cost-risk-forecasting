@@ -270,6 +270,11 @@ model = best_model()
 class_model = model["Classification"]
 reg_model = model["Regression"]
 
+
+model = best_model()
+class_model = model["Classification"]
+reg_model = model["Regression"]
+
 @app.route('/form', methods=['GET', 'POST'])
 def final_prediction():
     if not session.get('user_logged_in'):

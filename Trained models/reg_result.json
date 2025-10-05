@@ -1,7 +1,7 @@
 [
     {
         "Model name": "RandomForestRegressor",
-        "Accuracy": 0.9425635666898553,
+        "Accuracy": 0.9429769048321885,
         "Saved Model File": "Trained models/RandomForestRegressor.pkl"
     },
     {
