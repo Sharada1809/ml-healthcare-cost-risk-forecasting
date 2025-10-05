@@ -25,7 +25,7 @@ app.secret_key = 'supersecretkey123'
 db_config = {
     "host": "localhost",
     "user": "root",
-    "password": "", #Mysql
+    "password": "Mysql",
     "database": "healthcare"
 }
 
@@ -54,8 +54,12 @@ def remote_user_register():
         confirm_password = request.form.get("confirm_password")
 
         # Basic validation
-        if not (name and email and password):
+        if not (name and email and password and confirm_password):
             flash("All fields are required.", "danger")
+            return redirect(url_for("remote_user_register"))
+        
+        if password != confirm_password:
+            flash("Passwords do not match.", "danger")
             return redirect(url_for("remote_user_register"))
         
         conn = get_db_connection()
@@ -63,7 +67,7 @@ def remote_user_register():
             with conn.cursor() as cursor:
                 # Check for existing user by name, email, or mobile
                 query = """
-                SELECT * FROM users WHERE name = %s OR email = %s
+                SELECT * FROM user_details WHERE user_name = %s OR email_id = %s
                 """
                 cursor.execute(query, (name, email))
                 existing_user = cursor.fetchone()
@@ -74,35 +78,48 @@ def remote_user_register():
                 
                 # Insert new user
                 query = """
-                INSERT INTO users (name, email, mobile, password, confirm_passwor)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'remote_user')
+                INSERT INTO user_details (user_name, email_id, password)
+                VALUES (%s, %s, %s)
                 """
-                cursor.execute(query, (name, email, gender, country, state, city, address, mobile, password))
+                cursor.execute(query, (name, email,password))
                 conn.commit()
                 flash("Registration successful! You can now login.", "success")
+                return redirect(url_for("login"))
         except pymysql.MySQLError as e:
             flash(f"Error: {str(e)}", "danger")
         finally:
             conn.close()
 
-    return render_template("remote_user_register.html")
+    return render_template("signup.html")
 
-# login page
+#login code
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
 
-        if username == 'admin' and password == 'admin':
-            session['user_logged_in'] = True
-            flash('Login successful!', 'success')
-            return redirect(url_for('final_prediction'))
-        else:
-            flash('Invalid username or password', 'danger')
-            return redirect(url_for('login'))
+        conn = get_db_connection()
+        try:
+            with conn.cursor() as cursor:
+                query = "SELECT * FROM user_details WHERE user_name = %s AND password = %s"
+                cursor.execute(query, (username, password))
+                user = cursor.fetchone()
+                
+                if user:
+                    session['user_logged_in'] = True
+                    session['user_id'] = user['id']  # Optional
+                    flash('Login successful!', 'success')
+                    return redirect(url_for('final_prediction'))  # Adjust if needed
+                else:
+                    flash('Invalid username or password', 'danger')
+        except Exception as e:
+            flash(f"Error during login: {str(e)}", "danger")
+        finally:
+            conn.close()
 
     return render_template('login.html')
+
 
 # Logout route
 @app.route('/logout')
@@ -247,7 +264,7 @@ def best_model():
 
     return {"Classification": best_model_for_classification, "Regression" : best_model_for_regression}
 
-
+#Visusalization code here
 
 model = best_model()
 class_model = model["Classification"]
