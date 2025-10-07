@@ -88,7 +88,9 @@ The dataset used in this project includes:
 
 1. **Clone the repository**:
 
-   ```git.clone https://github.com/Sharada1809/ml-healthcare-cost-risk-forecasting.git
+   ```bash
+   git clone https://github.com/Sharada1809/ml-healthcare-cost-risk-forecasting.git
+   cd ml-healthcare-cost-risk-forecasting
    ```
 
 2. **Create a virtual environment** (optional but recommended):
