@@ -1,0 +1,35 @@
+<style>
+  .model-performance-overview {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+  }
+  .plot-container {
+    flex: 1 1 450px; /* fixed basis */
+    max-width: 450px;
+    text-align: center;
+  }
+  .plot-container img {
+    width: 450px;   /* fixed width */
+    height: 450px;  /* fixed height */
+    object-fit: contain; /* keep aspect ratio inside */
+    border: 1px solid #ccc;
+    background: #fafafa;
+    padding: 5px;
+    box-sizing: border-box;
+  }
+</style>
+
+<div class="model-performance-overview">
+  <div class="plot-container">
+    <h2>Classification Accuracy per Disease Risk</h2>
+    <img src="data:image/png;base64,{{ cls_plot }}" alt="Classification Accuracy Plot" />
+  </div>
+
+  <div class="plot-container">
+    <h2>Regression Metrics</h2>
+    <img src="data:image/png;base64,{{ reg_plot }}" alt="Regression Metrics Plot" />
+  </div>
+</div>

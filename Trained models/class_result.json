@@ -2,11 +2,25 @@
     {
         "Model name": "RandomForestClassifier",
         "Accuracy": 1.0,
-        "Saved Model File": "Trained models/RandomForestClassifier.pkl"
+        "Saved Model File": "Trained models/RandomForestClassifier.pkl",
+        "Per Target Accuracies": {
+            "diabetes_risk": 1.0,
+            "hypertension_risk": 1.0,
+            "cholesterol_risk": 1.0,
+            "liver_disease_risk": 1.0,
+            "kidney_disease_risk": 1.0
+        }
     },
     {
         "Model name": "XGBClassifier",
         "Accuracy": 1.0,
-        "Saved Model File": "Trained models/XGBClassifier.pkl"
+        "Saved Model File": "Trained models/XGBClassifier.pkl",
+        "Per Target Accuracies": {
+            "diabetes_risk": 1.0,
+            "hypertension_risk": 1.0,
+            "cholesterol_risk": 1.0,
+            "liver_disease_risk": 1.0,
+            "kidney_disease_risk": 1.0
+        }
     }
 ]

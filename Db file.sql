@@ -9,4 +9,7 @@ user_name varchar(50) not null,
 email_id varchar(100) not null unique,
 password varchar(100) not null
 );
+ 
+select * from user_details;
+
 

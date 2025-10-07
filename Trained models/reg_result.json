@@ -1,22 +1,34 @@
 [
     {
         "Model name": "RandomForestRegressor",
-        "Accuracy": 0.9429769048321885,
-        "Saved Model File": "Trained models/RandomForestRegressor.pkl"
+        "Accuracy": 0.9428829692735705,
+        "Saved Model File": "Trained models/RandomForestRegressor.pkl",
+        "MSE": 513209.69875362056,
+        "MAE": 518.386971655863,
+        "R2": 0.9428829692735705
     },
     {
         "Model name": "XGBRegressor",
         "Accuracy": 0.9554964317299999,
-        "Saved Model File": "Trained models/XGBRegressor.pkl"
+        "Saved Model File": "Trained models/XGBRegressor.pkl",
+        "MSE": 399874.8284850778,
+        "MAE": 492.7638677974919,
+        "R2": 0.9554964317299999
     },
     {
         "Model name": "LGBMRegressor",
         "Accuracy": 0.9596405791645665,
-        "Saved Model File": "Trained models/LGBMRegressor.pkl"
+        "Saved Model File": "Trained models/LGBMRegressor.pkl",
+        "MSE": 362638.70767426083,
+        "MAE": 470.8864969486324,
+        "R2": 0.9596405791645665
     },
     {
         "Model name": "CatBoostRegressor",
         "Accuracy": 0.9662555076908581,
-        "Saved Model File": "Trained models/CatBoostRegressor.pkl"
+        "Saved Model File": "Trained models/CatBoostRegressor.pkl",
+        "MSE": 303202.0487114553,
+        "MAE": 434.4299423551775,
+        "R2": 0.9662555076908581
     }
 ]

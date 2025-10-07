@@ -15,6 +15,15 @@ import warnings
 import json
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 import pymysql
+import os
+from flask import Flask, render_template, url_for
+import json
+import matplotlib
+matplotlib.use('Agg')  # Use non-interactive backend
+import matplotlib.pyplot as plt
+import seaborn as sns
+from io import BytesIO
+import base64
 warnings.filterwarnings("ignore", category=UserWarning, message="X does not have valid feature names")
 
 
@@ -180,7 +189,7 @@ def pre_processing(class_model = None , reg_model = None):
         #print(f"model= {class_model}")
         print(f"{file_name} accuracy : {average_accuracy}")
 
-        return {"Model name": file_name, "Accuracy" : average_accuracy, "Saved Model File":file_path}
+        return {"Model name": file_name, "Accuracy" : average_accuracy, "Saved Model File":file_path, "Per Target Accuracies": dict(zip(target_cat, individual_accuracies))}
 
     # Regression Pipeline
     if reg_model is not None:
@@ -206,7 +215,7 @@ def pre_processing(class_model = None , reg_model = None):
         print(f"{file_name} MAE : {mae:.2f}")
         print(f"{file_name} R² Score : {r2:.2f}")
 
-        return {"Model name": file_name, "Accuracy" : r2, "Saved Model File":file_path}
+        return {"Model name": file_name, "Accuracy" : r2, "Saved Model File":file_path,"MSE": mse, "MAE": mae, "R2": r2}
     
 
 def train_and_save():
@@ -265,6 +274,64 @@ def best_model():
     return {"Classification": best_model_for_classification, "Regression" : best_model_for_regression}
 
 #Visusalization code here
+@app.route('/visualization')
+def visualization():
+    # Load saved model performance results
+    with open("Trained models/class_result.json", "r") as f1:
+        cls_model_results = json.load(f1)
+    with open("Trained models/reg_result.json", "r") as f2:
+        reg_model_results = json.load(f2)
+
+    # Get best classification model
+    cls_best = max(cls_model_results, key=lambda x: x["Accuracy"])
+    per_target_accuracies = cls_best.get("Per Target Accuracies", {})
+
+    # Get best regression model
+    reg_best = max(reg_model_results, key=lambda x: x["Accuracy"])
+    mse = reg_best.get("MSE", 0)
+    mae = reg_best.get("MAE", 0)
+    r2 = reg_best.get("R2", 0)
+
+    # --- Classification Accuracy Plot ---
+    fig1, ax1 = plt.subplots(figsize=(8,5))
+    sns.barplot(x=list(per_target_accuracies.keys()), y=list(per_target_accuracies.values()), ax=ax1)
+    ax1.set_title(f"{cls_best['Model name']} - Accuracy per Disease Risk")
+    ax1.set_ylabel("Accuracy")
+    ax1.set_ylim(0, 1)
+    plt.xticks(rotation=45)
+
+    buf1 = BytesIO()
+    fig1.savefig(buf1, format="png", bbox_inches='tight')
+    buf1.seek(0)
+    cls_plot = base64.b64encode(buf1.getvalue()).decode('utf8')
+    plt.close(fig1)
+
+    # --- Regression Metrics Plot -
+    metrics = ['MSE', 'MAE', 'R²']
+    raw_values = [mse, mae, r2]
+
+    # Normalize values to 0-1 range for comparison
+    max_val = max(raw_values)
+    norm_values = [v / max_val for v in raw_values]
+
+    fig2, ax2 = plt.subplots(figsize=(6, 4))
+    sns.barplot(x=metrics, y=norm_values, ax=ax2)
+    ax2.set_title(f"{reg_best['Model name']} - Normalized Regression Metrics")
+    ax2.set_ylabel("Normalized Value (0–1)")
+    ax2.set_ylim(0, max(norm_values) + 0.2)
+    plt.xticks(rotation=0)
+
+    # Annotate with actual metric values, placed slightly above each bar
+    for i, v in enumerate(raw_values):
+        ax2.text(i, norm_values[i] + 0.05, f"{v:.2f}", ha='center', va='bottom', fontsize=9)
+
+    buf2 = BytesIO()
+    fig2.savefig(buf2, format="png", bbox_inches='tight')
+    buf2.seek(0)
+    reg_plot = base64.b64encode(buf2.getvalue()).decode('utf8')
+    plt.close(fig2)
+
+    return render_template('visualization.html', cls_plot=cls_plot, reg_plot=reg_plot)
 
 model = best_model()
 class_model = model["Classification"]
