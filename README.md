@@ -108,7 +108,7 @@ The dataset used in this project includes:
 
 4. **Set up MySQL database**:
 
-   * Create a database named `healthcare`
+   * Create a database named `healthcare` or import the given Db file in your local server
    * Create a table `user_details`:
 
      ```sql
