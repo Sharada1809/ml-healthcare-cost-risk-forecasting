@@ -221,7 +221,7 @@ healthcare-risk-prediction/
 │   ├── form.html
 │   └── visualization.html
 │
-├── static/                       # Static files (CSS, JS)
+├── static/style.css                      # Static files (CSS, JS)
 │
 ├── Dataset.csv                   # Health dataset (user input features and labels)
 │
