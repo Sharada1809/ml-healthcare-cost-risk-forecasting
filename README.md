@@ -222,7 +222,7 @@ healthcare-risk-prediction/
 │
 ├── Dataset.csv                   # Health dataset (user input features and labels)
 │
-├── app.py                        # Main Flask application and ML logic
+├── main.py                        # Main Flask application and ML logic
 ├── requirements.txt              # Required Python packages
 └── README.md                     # Project documentation
 ```
